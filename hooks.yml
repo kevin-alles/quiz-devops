@@ -1,9 +1,9 @@
 - id: redeploy-webhook
-  execute-command: "/opt/quiz/webhook/redeploy.sh"
-  command-working-directory: "/opt/quiz/webhook"
+  execute-command: "/opt/quiz/devops/testhook.sh"
+  command-working-directory: "/opt/quiz/devops/"
   pass-arguments-to-command:
     - source: payload
       name: branch
     - source: payload
-      name: ref
-  response-body: "Redeployment triggered for branch: {{.branch}} and ref: {{.ref}}\n"
+      name: repo
+  response-body: "Redeployment triggered for branch: {{.branch}} and repo: {{.repo}}\n"

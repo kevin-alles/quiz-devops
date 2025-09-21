@@ -19,6 +19,7 @@ if [[ "$REPO_NAME" == "all" ]]; then
     # Process all repositories: devops, frontend, backend
     exit_codes=()
     overall_exit_code=0
+    BRANCH="main"  # Ensure branch is main when deploying all
     
     for part in devops frontend backend; do
         echo "Processing $part..."

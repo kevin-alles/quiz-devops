@@ -1,0 +1,11 @@
+[Unit]
+Description=Webhook server
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/webhook -nopanic -hooks /etc/webhook/hooks.yml -port 9000 -verbose -hotreload
+User=www-data
+Group=www-data
+
+[Install]
+WantedBy=multi-user.target

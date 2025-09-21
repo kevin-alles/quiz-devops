@@ -17,12 +17,13 @@ echo "Installation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 # Install necessary packages
 echo "Installing necessary packages..."
 apt-get update
-apt-get install -y git apache2 php libapache2-mod-php
+apt-get install -y git apache2 php libapache2-mod-php webhook
 
 # Variables
 APPDIR="/opt/quiz"
 APACHE2CONF="quiz.conf"
 SYSTEMDBACKENDSERVICE="quiz-backend.service"
+SYSTEMDWEBHOOKSERVICE="webhook.service"
 USER="quiz"
 GROUP="quiz"
 
@@ -49,27 +50,38 @@ for dir in devops frontend backend; do
     chmod 750 "$APPDIR/$dir"
 done
 
-# Start deployment of repositories
-echo "Deploying repositories..."
-bash $APPDIR/devops/redeploy.sh main all
+# Start deployment of devops repository
+echo "Deploying devops repository..."
+git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops"
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."
 a2dissite 000-default.conf
-rm /etc/apache2/sites-enabled/000-default.conf
+rm /etc/apache2/sites-available/000-default.conf
 ln -sf $APPDIR/devops/$APACHE2CONF /etc/apache2/sites-available/$APACHE2CONF
 a2ensite $APACHE2CONF
 a2enmod rewrite
 systemctl enable apache2
 systemctl restart apache2
 
-# Set up systemd service
-echo "Setting up systemd service..."
+# Set up systemd service for backend
+echo "Setting up systemd service for backend ..."
 ln -sf $APPDIR/devops/$SYSTEMDBACKENDSERVICE /etc/systemd/system/
 systemctl daemon-reload
-systemctl --user enable $SYSTEMDBACKENDSERVICE
-systemctl --user start $SYSTEMDBACKENDSERVICE
-systemctl --user status $SYSTEMDBACKENDSERVICE
+systemctl enable $SYSTEMDBACKENDSERVICE
+systemctl start $SYSTEMDBACKENDSERVICE
+
+# Set up webhook
+echo "Setting up webhook..."
+mkdir -p /etc/webhook
+ln -sf $APPDIR/devops/hooks.yml /etc/webhook/
+
+# Set up systemd service for webhook
+echo "Setting up systemd service for webhook..."
+ln -sf $APPDIR/devops/$SYSTEMDWEBHOOKSERVICE /etc/systemd/system/
+systemctl daemon-reload
+systemctl enable $SYSTEMDWEBHOOKSERVICE
+systemctl start $SYSTEMDWEBHOOKSERVICE
 
 # Set up sudoers for $USER user
 echo "Setting up sudoers for $USER user..."
