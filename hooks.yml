@@ -1,5 +1,5 @@
 - id: redeploy-webhook
-  execute-command: "/opt/quiz/devops/testhook.sh"
+  execute-command: "/opt/quiz/devops/redeploy.sh"
   command-working-directory: "/opt/quiz/devops/"
   pass-arguments-to-command:
     - source: payload
