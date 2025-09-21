@@ -17,7 +17,7 @@ echo "Installation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 # Install necessary packages
 echo "Installing necessary packages..."
 apt-get update
-apt-get install -y git apache2 php libapache2-mod-php webhook
+apt-get install -y git apache2 php libapache2-mod-php webhook sudo
 
 # Variables
 APPDIR="/opt/quiz"
@@ -30,24 +30,24 @@ GROUP="quiz"
 # Create user and group if they don't exist
 if ! id -u $USER &>/dev/null; then
     echo "Creating user and group '$USER'..."
-    groupadd --system $GROUP
-    useradd --system --gid $GROUP --home $APPDIR --shell /sbin/nologin $USER
+    sudo groupadd --system $GROUP
+    sudo useradd --system --gid $GROUP --home $APPDIR --shell /sbin/nologin $USER
 else
     echo "User '$USER' already exists."
-    usermod -d $APPDIR $USER
-    usermod -s /sbin/nologin $USER
+    sudo usermod -d $APPDIR $USER
+    sudo usermod -s /sbin/nologin $USER
 fi
 
 # Create application directory
 echo "Creating application directory..."
-mkdir -p $APPDIR
+sudo mkdir -p $APPDIR
 
 # Create application subdirectories
 echo "Creating application subdirectories..."
 for dir in devops frontend backend; do
-    mkdir -p "$APPDIR/$dir"
-    chown $USER:$GROUP "$APPDIR/$dir"
-    chmod 750 "$APPDIR/$dir"
+    sudo mkdir -p "$APPDIR/$dir"
+    sudo chown $USER:$GROUP "$APPDIR/$dir"
+    sudo chmod 750 "$APPDIR/$dir"
 done
 
 # Start deployment of devops repository
@@ -56,46 +56,46 @@ git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops"
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."
-a2dissite 000-default.conf
-rm /etc/apache2/sites-available/000-default.conf
-ln -sf $APPDIR/devops/$APACHE2CONF /etc/apache2/sites-available/$APACHE2CONF
-a2ensite $APACHE2CONF
-a2enmod rewrite
-systemctl enable apache2
-systemctl restart apache2
+sudo a2dissite 000-default.conf
+sudo rm /etc/apache2/sites-available/000-default.conf
+sudo ln -sf $APPDIR/devops/$APACHE2CONF /etc/apache2/sites-available/$APACHE2CONF
+sudo a2ensite $APACHE2CONF
+sudo a2enmod rewrite
+sudo systemctl enable apache2
+sudo systemctl restart apache2
 
 # Set up systemd service for backend
 echo "Setting up systemd service for backend ..."
-ln -sf $APPDIR/devops/$SYSTEMDBACKENDSERVICE /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable $SYSTEMDBACKENDSERVICE
-systemctl start $SYSTEMDBACKENDSERVICE
+sudo ln -sf $APPDIR/devops/$SYSTEMDBACKENDSERVICE /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable $SYSTEMDBACKENDSERVICE
+sudo systemctl start $SYSTEMDBACKENDSERVICE
 
 # Set up webhook
 echo "Setting up webhook..."
-mkdir -p /etc/webhook
-ln -sf $APPDIR/devops/hooks.yml /etc/webhook/
+sudo mkdir -p /etc/webhook
+sudo ln -sf $APPDIR/devops/hooks.yml /etc/webhook/
 
 # Set up systemd service for webhook
 echo "Setting up systemd service for webhook..."
-ln -sf $APPDIR/devops/$SYSTEMDWEBHOOKSERVICE /etc/systemd/system/
-systemctl daemon-reload
-systemctl enable $SYSTEMDWEBHOOKSERVICE
-systemctl start $SYSTEMDWEBHOOKSERVICE
+sudo ln -sf $APPDIR/devops/$SYSTEMDWEBHOOKSERVICE /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable $SYSTEMDWEBHOOKSERVICE
+sudo systemctl start $SYSTEMDWEBHOOKSERVICE
 
 # Set up sudoers for $USER user
 echo "Setting up sudoers for $USER user..."
-echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $APACHE2CONF" > /etc/sudoers.d/$USER
-chmod 440 /etc/sudoers.d/$USER
+echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $APACHE2CONF" | sudo tee /etc/sudoers.d/$USER
+sudo chmod 440 /etc/sudoers.d/$USER
 
 # Set permissions
 echo "Setting permissions..."
-chown -R $USER:$GROUP $APPDIR
-chmod 750 $APPDIR
+sudo chown -R $USER:$GROUP $APPDIR
+sudo chmod 750 $APPDIR
 
 # Start redeploy script for all repositories
 echo "Starting redeploy script for all repositories..."
-bash $APPDIR/devops/redeploy.sh main all &
+sudo bash $APPDIR/devops/redeploy.sh main all &
 
 # Log end time
 echo "Installation finished at $(date +"%d.%m.%Y %H:%M:%S")"
