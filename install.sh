@@ -53,6 +53,7 @@ done
 # Start deployment of devops repository
 echo "Deploying devops repository..."
 git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops"
+sudo chmod u+x $APPDIR/*.sh
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."

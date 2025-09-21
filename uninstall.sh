@@ -14,6 +14,13 @@ exec > >(tee -a $LOG_FILE) 2>&1
 # Log start time
 echo "Deinstallation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 
+# Stop and disable services
+systemctl stop quiz-backend.service || true
+systemctl disable quiz-backend.service || true
+systemctl stop webhook.service || true
+systemctl disable webhook.service || true
+
+# Remove user, group, installed packages, application files, services and configurations
 sudo userdel quiz
 sudo apt purge -y apache2 libapache2-mod-php php git webhook sudo
 rm -r /etc/apache2/
@@ -23,4 +30,5 @@ rm -r /etc/webhook/
 rm -r /etc/systemd/system/webhook.service
 rm -r /etc/sudoers.d/
 
+# Log end time
 echo "Deinstallation abgeschlossen um $(date +"%d.%m.%Y %H:%M:%S")"
