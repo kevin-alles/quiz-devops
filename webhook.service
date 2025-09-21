@@ -5,7 +5,7 @@ Description=Webhook server
 Type=simple
 ExecStart=/usr/bin/webhook -nopanic -hooks /etc/webhook/hooks.yml -port 9000 -verbose -hotreload
 User=www-data
-Group=www-data
+Group=quiz
 
 [Install]
 WantedBy=multi-user.target
