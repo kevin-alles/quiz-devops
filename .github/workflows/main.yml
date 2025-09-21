@@ -12,4 +12,4 @@ jobs:
         uses: jasongitmail/fast-webhook@v1
         with:
            url: ${{ secrets.WEBHOOK_URL }}
-           json: '{"branch": "${{ github.ref }}", "repo": "${{ github.repositoryUrl }}"}'
+           json: '{"branch": "${{ github.ref_name }}", "repo": "${{ github.repositoryUrl }}"}'
