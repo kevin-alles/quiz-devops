@@ -107,10 +107,8 @@ sudo chmod 440 /etc/sudoers.d/$USER
 
 # Set permissions
 echo "Setting permissions..."
-sudo chown -R $USER:$GROUP $APPDIR
-sudo chmod 750 $APPDIR
-sudo chown -R $USER:www-data $APPDIR/frontend
-sudo chmod -R 770 $APPDIR/frontend
+sudo chown -R $USER:www-data $APPDIR
+sudo chmod 770 $APPDIR
 sudo systemctl restart apache2
 
 # Start redeploy script for all repositories
