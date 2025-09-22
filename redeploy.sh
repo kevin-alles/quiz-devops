@@ -83,7 +83,7 @@ if [[ "$REPO_NAME" == "backend" ]]; then
     # Download Release into redeploy directory
     echo "Downloading release from $REPO_URL with Tag $REPO_TAG"
     # TODO: Make dynamic again
-    wget -q -O- "https://github.com/kevin-alles/quiz-backend/releases/download/latest/$JAR_NAME" > "$REDEPLOY_DIR/"
+    wget -q -O- "https://github.com/kevin-alles/quiz-backend/releases/download/latest/$JAR_NAME" > "$REDEPLOY_DIR/quiz-backend.jar"
 else
     # Clone repository into redeploy directory
     echo "Cloning repository from $REPO_URL (branch: $BRANCH_NAME) to $REDEPLOY_DIR"
