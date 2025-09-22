@@ -49,6 +49,7 @@ if [[ "$REPO_NAME" =~ git://github.com/kevin-alles//quiz-(.+)\.git ]]; then
     REPO_NAME="${BASH_REMATCH[1]}"
 fi
 
+# Variables
 REPO_URL="https://github.com/kevin-alles/quiz-${REPO_NAME}.git"
 
 APPDIR="/opt/quiz"
