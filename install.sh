@@ -68,6 +68,7 @@ sudo systemctl restart apache2
 # Set up systemd service for backend
 echo "Setting up systemd service for backend ..."
 sudo ln -sf $APPDIR/devops/$SYSTEMDBACKENDSERVICE /etc/systemd/system/
+sudo ln -sf $APPDIR/devops/start.sh $APPDIR/backend/start.sh
 sudo systemctl daemon-reload
 sudo systemctl enable $SYSTEMDBACKENDSERVICE
 sudo systemctl start $SYSTEMDBACKENDSERVICE
