@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -e
+# set -e  # Removed to allow script to continue on errors
 
 # Set log file location
 LOG_FILE=/tmp/install.log
@@ -63,7 +63,7 @@ fi
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."
-sudo a2dissite 000-default.conf
+sudo a2dissite -q 000-default.conf
 sudo rm /etc/apache2/sites-available/000-default.conf
 sudo ln -sf $APPDIR/devops/$APACHE2CONF /etc/apache2/sites-available/$APACHE2CONF
 sudo a2ensite $APACHE2CONF
@@ -93,7 +93,7 @@ sudo systemctl start $SYSTEMDWEBHOOKSERVICE
 
 # Set up sudoers for $USER user
 echo "Setting up sudoers for $USER user..."
-echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $APACHE2CONF, /bin/systemctl daemon-reload" | sudo tee /etc/sudoers.d/$USER
+echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $SYSTEMDWEBHOOKSERVICE, /bin/systemctl restart apache2, /bin/systemctl daemon-reload" | sudo tee /etc/sudoers.d/$USER
 sudo chmod 440 /etc/sudoers.d/$USER
 
 # Set permissions
