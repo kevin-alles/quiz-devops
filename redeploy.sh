@@ -112,18 +112,18 @@ if [[ "$REPO_NAME" == "devops" ]]; then
     # Copy updated service files and reload systemd
     echo "Updating service files and reloading systemd"
     cp $REDEPLOY_DIR/* $WORKDIR/
-    systemctl restart $SYSTEMDWEBHOOKSERVICE
+    sudo systemctl restart $SYSTEMDWEBHOOKSERVICE
 
 elif [[ "$REPO_NAME" == "frontend" ]]; then
     # move everything from redeploy to production
     cp $REDEPLOY_DIR/* $REPODIR/
-    systemctl restart apache2
+    sudo systemctl restart apache2
 
 elif [[ "$REPO_NAME" == "backend" ]]; then
     # move jar-file from redeploy to production
     cp $REDEPLOY_DIR/quiz-backend.jar $REPODIR/quiz-backend.jar
     cp $WORKDIR/start.sh $REPODIR/
-    systemctl restart $SYSTEMDBACKENDSERVICE
+    sudo systemctl restart $SYSTEMDBACKENDSERVICE
 
 fi
 
