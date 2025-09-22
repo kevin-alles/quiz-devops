@@ -114,11 +114,23 @@ if [[ "$REPO_NAME" == "devops" ]]; then
         echo "redeploy.sh has not changed, continuing with redeployment"
     fi
 
+    # Check if hooks.yml changed and update if necessary
+    echo "Checking for changes in hooks.yml"
+    if ! cmp -s "$REDEPLOY_DIR/hooks.yml" "$WORKDIR/hooks.yml"; then
+        echo "hooks.yml has changed, updating and restarting webhook service"
+        if ! cp "$REDEPLOY_DIR/hooks.yml" "$WORKDIR/hooks.yml"; then
+            echo "ERROR: Failed to update hooks.yml at $(date '+%Y-%m-%d %H:%M:%S')"
+            exit 1
+        fi
+        sudo systemctl restart $SYSTEMDWEBHOOKSERVICE
+    else
+        echo "hooks.yml has not changed, continuing with redeployment"
+    fi
+
     # Copy updated service files and reload systemd
     echo "Updating service files and reloading systemd"
     cp $REDEPLOY_DIR/* $WORKDIR/
     sudo systemctl daemon-reload
-    sudo systemctl restart $SYSTEMDWEBHOOKSERVICE
 
 elif [[ "$REPO_NAME" == "frontend" ]]; then
     # move everything from redeploy to production
