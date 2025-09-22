@@ -19,6 +19,11 @@ echo "Installing necessary packages..."
 apt-get update
 apt-get install -y git apache2 webhook sudo php libapache2-mod-php
 
+# Install JDK21
+wget -q -O "/tmp/jdk-21_linux-x64_bin.deb" "https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb"
+dpkg -i jdk-21_linux-x64_bin.deb
+rm jdk-21_linux-x64_bin.deb
+
 # Variables
 APPDIR="/opt/quiz"
 APACHE2CONF="quiz.conf"
