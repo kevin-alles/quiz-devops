@@ -138,5 +138,5 @@ if ! rm -rf "$REDEPLOY_DIR"; then
     exit 1
 fi
 
-# Log end time
+# Log end times
 echo "Redeploy finished at $(date '+%Y-%m-%d %H:%M:%S')"
