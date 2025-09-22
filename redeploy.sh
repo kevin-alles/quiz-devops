@@ -42,6 +42,7 @@ if [[ "$REPO_NAME" == "all" ]]; then
         echo "  $result"
     done
     
+    # Unset logging
     export REDEPLOY_LOGGING=0
 
     exit $overall_exit_code
