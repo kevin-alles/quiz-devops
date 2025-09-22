@@ -111,8 +111,13 @@ if [[ "$REPO_NAME" == "devops" ]]; then
 
     # Copy updated service files and reload systemd
     echo "Updating service files and reloading systemd"
+    echo 1
     cp $REDEPLOY_DIR/* $WORKDIR/
+    echo 2
+    sudo systemctl daemon-reload
+    echo 3
     sudo systemctl restart $SYSTEMDWEBHOOKSERVICE
+    echo 4
 
 elif [[ "$REPO_NAME" == "frontend" ]]; then
     # move everything from redeploy to production
