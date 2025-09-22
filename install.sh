@@ -98,7 +98,7 @@ sudo chmod 750 $APPDIR
 
 # Start redeploy script for all repositories
 echo "Starting redeploy script for all repositories..."
-sudo bash $APPDIR/devops/redeploy.sh main all &
+sudo su quiz -c "bash $APPDIR/devops/redeploy.sh main all" &
 
 # Log end time
 echo "Installation finished at $(date +"%d.%m.%Y %H:%M:%S")"
