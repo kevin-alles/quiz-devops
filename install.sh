@@ -20,9 +20,15 @@ apt-get update
 apt-get install -y git apache2 webhook sudo php libapache2-mod-php
 
 # Install JDK21
-wget -q -O "/tmp/jdk-21_linux-x64_bin.deb" "https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb"
-dpkg -i jdk-21_linux-x64_bin.deb
-rm jdk-21_linux-x64_bin.deb
+JAVA_VERSION=$(java -version 2>&1 | awk -F[\".] '/version/ {print $2}')
+if [ "$JAVA_VERSION" != "21" ]; then
+    echo "Removing old Java version..."
+    apt-get remove -y openjdk-* || true
+    apt-get purge -y openjdk-* || true
+    wget -q -O "/tmp/jdk-21_linux-x64_bin.deb" "https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.deb"
+    dpkg -i /tmp/jdk-21_linux-x64_bin.deb
+    rm /tmp/jdk-21_linux-x64_bin.deb
+fi
 
 # Variables
 APPDIR="/opt/quiz"
