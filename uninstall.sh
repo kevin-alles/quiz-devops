@@ -18,7 +18,8 @@ echo "Deinstallation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 sudo a2dismod mpm_worker || true
 sudo a2dismod mpm_prefork || true
 sudo a2dismod mpm_event || true
-sudo apt-get remove --purge -y git apache2 libapache2-mod-php php webhook sudo || true
+apt-get remove -y git apache2 webhook sudo php libapache2-mod-php || true
+apt-get purge -y git apache2 webhook sudo php libapache2-mod-php || true
 apt autoremove -y || true
 userdel quiz || true
 rm -r /etc/apache2/ || true
