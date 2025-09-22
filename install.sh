@@ -19,6 +19,12 @@ echo "Installing necessary packages..."
 apt-get update
 apt-get install -y git apache2 webhook sudo
 
+# Check if php is installed, otherwise install default version
+if ! command -v php &>/dev/null; then
+    echo "No PHP installation found. Installing default PHP version..."
+    apt-get install -y php
+fi
+
 # Detect installed PHP version
 PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
 echo "Detected PHP version: $PHP_VERSION"
