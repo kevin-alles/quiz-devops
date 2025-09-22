@@ -87,7 +87,7 @@ sudo systemctl start $SYSTEMDWEBHOOKSERVICE
 
 # Set up sudoers for $USER user
 echo "Setting up sudoers for $USER user..."
-echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $APACHE2CONF" | sudo tee /etc/sudoers.d/$USER
+echo "$USER ALL=NOPASSWD: /bin/systemctl restart $SYSTEMDBACKENDSERVICE, /bin/systemctl status $SYSTEMDBACKENDSERVICE, /bin/systemctl restart $APACHE2CONF, /bin/systemctl daemon-reload" | sudo tee /etc/sudoers.d/$USER
 sudo chmod 440 /etc/sudoers.d/$USER
 
 # Set permissions
