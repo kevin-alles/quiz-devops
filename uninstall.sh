@@ -15,7 +15,7 @@ exec > >(tee -a $LOG_FILE) 2>&1
 echo "Deinstallation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 
 # Remove user, group, installed packages, application files, services and configurations
-sudo apt purge -y apache2 php libapache2-mod-php git webhook sudo
+apt-get remove --purge -y git apache2 libapache2-mod-php php webhook sudo
 userdel quiz
 rm -r /etc/apache2/
 rm -r /opt/quiz/

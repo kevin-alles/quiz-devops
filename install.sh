@@ -17,8 +17,7 @@ echo "Installation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 # Install necessary packages
 echo "Installing necessary packages..."
 apt-get update
-apt-get install -y git apache2 php webhook sudo
-apt-get install -y libapache2-mod-php
+apt-get install -y git php libapache2-mod-php apache2 webhook sudo
 
 # Variables
 APPDIR="/opt/quiz"
