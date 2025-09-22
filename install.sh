@@ -40,6 +40,9 @@ fi
 
 # Create application directory
 echo "Creating application directory..."
+if [ -d "$APPDIR" ]; then
+    sudo rm -rf "$APPDIR"
+fi
 sudo mkdir -p $APPDIR
 
 # Create application subdirectories
@@ -52,14 +55,9 @@ done
 
 # Start deployment of devops repository
 echo "Deploying devops repository..."
-if [ -d "$APPDIR/devops/.git" ]; then
-    echo "Devops repository already exists, pulling latest changes..."
-    sudo -u $USER git -C $APPDIR/devops/ pull origin main
-else
-    echo "Cloning devops repository..."
-    sudo -u $USER git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops/"
+echo "Cloning devops repository..."
+sudo -u $USER git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops/"
 sudo chmod ug+x $APPDIR/devops/*.sh
-fi
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."
