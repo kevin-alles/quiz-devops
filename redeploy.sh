@@ -11,18 +11,22 @@ LOG_FILE=/opt/quiz/devops/redeploy.log
 # Redirect all output (stdout and stderr) to log file and console
 exec > >(tee -a $LOG_FILE) 2>&1
 
+# Log start time
+echo "Redeploy started at $(date '+%Y-%m-%d %H:%M:%S')"
+
 BRANCH="${1:-main}"
 REPO_NAME="${2:-all}"
 
 # If REPO_NAME is 'all', process all repositories
 if [[ "$REPO_NAME" == "all" ]]; then
     # Process all repositories: devops, frontend, backend
+    echo "Processing all repositories..."
     exit_codes=()
     overall_exit_code=0
     BRANCH="main"  # Ensure branch is main when deploying all
     
     for part in devops frontend backend; do
-        echo "Processing $part..."
+        echo "Now processing $part..."
         bash "$0" "$BRANCH" "$part"
         exit_code=$?
         exit_codes+=("$part:$exit_code")
@@ -51,6 +55,10 @@ APPDIR="/opt/quiz"
 REPODIR="$APPDIR/$REPO_NAME"
 WORKDIR="$APPDIR/devops"
 REDEPLOY_DIR="$WORKDIR/redeploy/$REPO_NAME"
+REPO_TAG="latest"
+JAR_NAME="Quiz-Backend-0.0.1-SNAPSHOT.jar"
+SYSTEMDBACKENDSERVICE="quiz-backend.service"
+SYSTEMDWEBHOOKSERVICE="webhook.service"
 
 # Robustly extract branch name from possible formats
 if [[ "$BRANCH" =~ ^refs/heads/ ]]; then
@@ -61,9 +69,6 @@ else
     BRANCH_NAME="$BRANCH"
 fi
 
-echo -e "##################\n"
-echo "Redeploy started at $(date '+%Y-%m-%d %H:%M:%S')"
-
 # Ensure redeploy directory exists and is empty
 echo "Clearing $REDEPLOY_DIR"
 rm -rf "$REDEPLOY_DIR"
@@ -72,17 +77,24 @@ if ! mkdir -p "$REDEPLOY_DIR"; then
     exit 1
 fi
 
-# Clone repository into redeploy directory
-echo "Cloning repository from $REPO_URL (branch: $BRANCH_NAME) to $REDEPLOY_DIR"
-echo "Using branch: $BRANCH_NAME"
-if ! git clone --depth 1 --branch "$BRANCH_NAME" "$REPO_URL" "$REDEPLOY_DIR"; then
-    echo "ERROR: Failed to clone repository at $(date '+%Y-%m-%d %H:%M:%S')"
-    exit 1
+# fill redeploy directory
+echo "Preparing redeploy directory $REDEPLOY_DIR"
+if [[ "$REPO_NAME" == "backend"]]
+    # Download Release into redeploy directory
+    echo "Downloading release from $REPO_URL with Tag $REPO_TAG"
+    # TODO: Make dynamic again
+    wget -q -O- "https://github.com/kevin-alles/quiz-backend/releases/download/latest/$JAR_NAME" > "$REDEPLOY_DIR/"
+else
+    # Clone repository into redeploy directory
+    echo "Cloning repository from $REPO_URL (branch: $BRANCH_NAME) to $REDEPLOY_DIR"
+    if ! git clone --depth 1 --branch "$BRANCH_NAME" "$REPO_URL" "$REDEPLOY_DIR"; then
+        echo "ERROR: Failed to clone repository at $(date '+%Y-%m-%d %H:%M:%S')"
+        exit 1
+    fi
 fi
 
 # process "devops" repository
 if [[ "$REPO_NAME" == "devops" ]]; then
-
     # Check if redeploy.sh changed and update if necessary
     echo "Checking for changes in redeploy.sh"
     if ! cmp -s "$REDEPLOY_DIR/redeploy.sh" "$WORKDIR/redeploy.sh"; then
@@ -97,29 +109,23 @@ if [[ "$REPO_NAME" == "devops" ]]; then
         echo "redeploy.sh has not changed, continuing with redeployment"
     fi
 
-    # Check if hooks.yml changed and update if necessary
-    echo "Checking for changes in hooks.yml"
-    if ! cmp -s "$REDEPLOY_DIR/hooks.yml" "$WORKDIR/hooks.yml"; then
-        echo "hooks.yml has changed, updating"
-        if ! cp "$REDEPLOY_DIR/hooks.yml" "$WORKDIR/hooks.yml"; then
-            echo "ERROR: Failed to update hooks.yml at $(date '+%Y-%m-%d %H:%M:%S')"
-            exit 1
-        fi
-    else
-        echo "hooks.yml has not changed, continuing with redeployment"
-    fi
+    # Copy updated service files and reload systemd
+    echo "Updating service files and reloading systemd"
+    cp $REDEPLOY_DIR/* $WORKDIR/
+    systemctl daemon-reload
+    systemctl restart $SYSTEMDWEBHOOKSERVICE
+
 elif [[ "$REPO_NAME" == "frontend" ]]; then
-
     # move everything from redeploy to production
-    cp $REDEPLOY_DIR/* $REPODIR
-
+    cp $REDEPLOY_DIR/* $REPODIR/
     systemctl restart apache2
+
 elif [[ "$REPO_NAME" == "backend" ]]; then
-
     # move jar-file from redeploy to production
-    cp $REDEPLOY_DIR/*.jar $REPODIR
+    cp $REDEPLOY_DIR/quiz-backend.jar $REPODIR/quiz-backend.jar
+    cp $WORKDIR/start.sh $REPODIR/
+    systemctl restart $SYSTEMDBACKENDSERVICE
 
-    systemctl restart quiz-backend
 fi
 
 # Delete temporary redeploy folder
