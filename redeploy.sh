@@ -1,6 +1,6 @@
 #! /bin/bash
 
-set -e
+# set -e  # Removed to allow script to continue on errors
 
 # Set log file location
 LOG_FILE=/opt/quiz/devops/redeploy.log
