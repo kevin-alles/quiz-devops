@@ -112,7 +112,6 @@ if [[ "$REPO_NAME" == "devops" ]]; then
     # Copy updated service files and reload systemd
     echo "Updating service files and reloading systemd"
     cp $REDEPLOY_DIR/* $WORKDIR/
-    systemctl daemon-reload
     systemctl restart $SYSTEMDWEBHOOKSERVICE
 
 elif [[ "$REPO_NAME" == "frontend" ]]; then
