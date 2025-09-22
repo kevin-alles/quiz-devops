@@ -45,7 +45,7 @@ if [[ "$REPO_NAME" == "all" ]]; then
 fi
     
 # Extract repository part from git URL using regex
-if [[ "$REPO_NAME" =~ git://github.com/kevin-alles//quiz-(.+)\.git ]]; then
+if [[ "$REPO_NAME" =~ git://github.com/kevin-alles/quiz-(.+)\.git ]]; then
     REPO_NAME="${BASH_REMATCH[1]}"
 fi
 
