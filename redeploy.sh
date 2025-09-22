@@ -122,13 +122,8 @@ elif [[ "$REPO_NAME" == "frontend" ]]; then
 
 elif [[ "$REPO_NAME" == "backend" ]]; then
     # move jar-file from redeploy to production
-    echo "1"
     cp $REDEPLOY_DIR/quiz-backend.jar $REPODIR/quiz-backend.jar
-    echo "2"
-    cp $WORKDIR/start.sh $REPODIR/
-    echo "3"
     sudo systemctl restart $SYSTEMDBACKENDSERVICE
-    echo "4"
 fi
 
 # Delete temporary redeploy folder
