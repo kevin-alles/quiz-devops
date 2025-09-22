@@ -52,8 +52,14 @@ done
 
 # Start deployment of devops repository
 echo "Deploying devops repository..."
-git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops"
+if [ -d "$APPDIR/devops/.git" ]; then
+    echo "Devops repository already exists, pulling latest changes..."
+    sudo -u $USER git -C $APPDIR/devops/ pull origin main
+else
+    echo "Cloning devops repository..."
+    sudo -u $USER git clone https://github.com/kevin-alles/quiz-devops.git "$APPDIR/devops/"
 sudo chmod ug+x $APPDIR/devops/*.sh
+fi
 
 # Enable and start Apache2
 echo "Enabling and starting Apache2..."
@@ -94,6 +100,9 @@ sudo chmod 440 /etc/sudoers.d/$USER
 echo "Setting permissions..."
 sudo chown -R $USER:$GROUP $APPDIR
 sudo chmod 750 $APPDIR
+sudo chown -R $USER:www-data $APPDIR/frontend
+sudo chmod -R 770 $APPDIR/frontend
+sudo systemctl restart apache2
 
 # Start redeploy script for all repositories
 echo "Starting redeploy script for all repositories..."
