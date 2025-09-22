@@ -17,25 +17,7 @@ echo "Installation gestartet um $(date +"%d.%m.%Y %H:%M:%S")"
 # Install necessary packages
 echo "Installing necessary packages..."
 apt-get update
-apt-get install -y git apache2 webhook sudo
-
-# Check if php is installed, otherwise install default version
-if ! command -v php &>/dev/null; then
-    echo "No PHP installation found. Installing default PHP version..."
-    apt-get install -y php
-fi
-
-# Detect installed PHP version
-PHP_VERSION=$(php -r 'echo PHP_MAJOR_VERSION.".".PHP_MINOR_VERSION;')
-echo "Detected PHP version: $PHP_VERSION"
-
-# Install correct PHP and Apache PHP module
-echo "Installing PHP and Apache PHP module..."
-apt-get install -y "php$PHP_VERSION" "libapache2-mod-php$PHP_VERSION"
-
-# Enable correct Apache PHP module
-echo "Enabling Apache PHP module: php$PHP_VERSION"
-sudo a2enmod "php$PHP_VERSION"
+apt-get install -y git apache2 webhook sudo php libapache2-mod-php
 
 # Variables
 APPDIR="/opt/quiz"
