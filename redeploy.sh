@@ -79,7 +79,7 @@ fi
 
 # fill redeploy directory
 echo "Preparing redeploy directory $REDEPLOY_DIR"
-if [[ "$REPO_NAME" == "backend"]]
+if [[ "$REPO_NAME" == "backend" ]]; then
     # Download Release into redeploy directory
     echo "Downloading release from $REPO_URL with Tag $REPO_TAG"
     # TODO: Make dynamic again
