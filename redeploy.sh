@@ -5,11 +5,12 @@
 # Set log file location
 LOG_FILE=/opt/quiz/devops/redeploy.log
 
-# Truncate log file at start
-: > "$LOG_FILE"
-
-# Redirect all output (stdout and stderr) to log file and console
-exec > >(tee -a $LOG_FILE) 2>&1
+# Only set up logging if not already set (prevents duplicate entries)
+if [ -z "$REDEPLOY_LOGGING" ]; then
+    export REDEPLOY_LOGGING=1
+    : > "$LOG_FILE"
+    exec > >(tee -a $LOG_FILE) 2>&1
+fi
 
 # Log start time
 echo "Redeploy started at $(date '+%Y-%m-%d %H:%M:%S')"
@@ -41,6 +42,8 @@ if [[ "$REPO_NAME" == "all" ]]; then
         echo "  $result"
     done
     
+    export REDEPLOY_LOGGING=0
+
     exit $overall_exit_code
 fi
     
