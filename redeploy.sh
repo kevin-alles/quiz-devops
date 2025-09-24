@@ -134,12 +134,16 @@ if [[ "$REPO_NAME" == "devops" ]]; then
 
 elif [[ "$REPO_NAME" == "frontend" ]]; then
     # move everything from redeploy to production
+    echo "Deploying frontend to $REPODIR"
     cp $REDEPLOY_DIR/* $REPODIR/
+    echo "Restarting apache2"
     sudo systemctl restart apache2
 
 elif [[ "$REPO_NAME" == "backend" ]]; then
     # move jar-file from redeploy to production
+    echo "Deploying backend jar to $REPODIR"
     cp $REDEPLOY_DIR/$JAR_NAME $REPODIR/$JAR_NAME
+    echo "Restarting backend service"
     sudo systemctl restart $SYSTEMDBACKENDSERVICE
 fi
 
