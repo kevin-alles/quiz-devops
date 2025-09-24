@@ -61,7 +61,7 @@ REPODIR="$APPDIR/$REPO_NAME"
 WORKDIR="$APPDIR/devops"
 REDEPLOY_DIR="$WORKDIR/redeploy/$REPO_NAME"
 REPO_TAG="latest"
-JAR_NAME="Quiz-Backend-0.0.1-SNAPSHOT.jar"
+JAR_NAME="quiz-backend.jar"
 SYSTEMDBACKENDSERVICE="quiz-backend.service"
 SYSTEMDWEBHOOKSERVICE="webhook.service"
 
@@ -88,7 +88,7 @@ if [[ "$REPO_NAME" == "backend" ]]; then
     # Download Release into redeploy directory
     echo "Downloading release from $REPO_URL with Tag $REPO_TAG"
     # TODO: Make dynamic again
-    wget -q -O "$REDEPLOY_DIR/quiz-backend.jar" "https://github.com/kevin-alles/quiz-backend/releases/download/latest/$JAR_NAME"
+    wget -q -O "$REDEPLOY_DIR/$JAR_NAME" "https://github.com/kevin-alles/quiz-backend/releases/download/latest/$JAR_NAME"
 else
     # Clone repository into redeploy directory
     echo "Cloning repository from $REPO_URL (branch: $BRANCH_NAME) to $REDEPLOY_DIR"
@@ -139,7 +139,7 @@ elif [[ "$REPO_NAME" == "frontend" ]]; then
 
 elif [[ "$REPO_NAME" == "backend" ]]; then
     # move jar-file from redeploy to production
-    cp $REDEPLOY_DIR/quiz-backend.jar $REPODIR/quiz-backend.jar
+    cp $REDEPLOY_DIR/$JAR_NAME $REPODIR/$JAR_NAME
     sudo systemctl restart $SYSTEMDBACKENDSERVICE
 fi
 
